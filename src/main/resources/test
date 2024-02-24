@@ -1,0 +1,89 @@
+
+{
+    "id": 1,
+    "name": "Apron Dress",
+    "description": "An apron dress is sleeveless. It is based on an apron style with a bib at the front of the dress. ",
+    "barCode": "232323232",
+    "price": 150000,
+    "quantity": 8,
+    "category": {
+      "id": 2,
+      "name": "Dress",
+      "description": "Dress"
+    },
+    "brand": {
+      "id": 4,
+      "name": "Hermès",
+      "description": "Hermès"
+    },
+    "color": "GREEN",
+    "size": "MEDIUM",
+    "timeCreated": "2024-02-13T21:21:02.736379",
+    "timeUpdated": "2024-02-13T21:21:02.736395"
+  },
+  {
+    "id": 2,
+    "name": "Sheath Dress",
+    "description": "This has a body hugging fit all throughout. Related post : Guide to Dress Outlines. ",
+    "barCode": "232323232",
+    "price": 150000,
+    "quantity": 8,
+    "category": {
+      "id": 2,
+      "name": "Dress",
+      "description": "Dress"
+    },
+    "brand": {
+      "id": 4,
+      "name": "Hermès",
+      "description": "Hermès"
+    },
+    "color": "TAN",
+    "size": "LARGE",
+    "timeCreated": "2024-02-13T21:21:54.832479",
+    "timeUpdated": "2024-02-13T21:21:54.83249"
+  },
+  {
+    "id": 3,
+    "name": "Sun Dress",
+    "description": "This garment is best worn in the warmer months, as it's loose-fitting with spaghetti ...",
+    "barCode": "232323232",
+    "price": 100000,
+    "quantity": 20,
+    "category": {
+      "id": 2,
+      "name": "Dress",
+      "description": "Dress"
+    },
+    "brand": {
+      "id": 3,
+      "name": "Adidas",
+      "description": "Adidas"
+    },
+    "color": "TAN",
+    "size": "LARGE",
+    "timeCreated": "2024-02-13T21:22:46.132698",
+    "timeUpdated": "2024-02-13T21:22:46.132719"
+  },
+  {
+    "id": 4,
+    "name": "Sun Dress",
+    "description": "This garment is best worn in the warmer months, as it's loose-fitting with spaghetti ...",
+    "barCode": "23232323232",
+    "price": 100000,
+    "quantity": 5,
+    "category": {
+      "id": 2,
+      "name": "Dress",
+      "description": "Dress"
+    },
+    "brand": {
+      "id": 3,
+      "name": "Adidas",
+      "description": "Adidas"
+    },
+    "color": "TAN",
+    "size": "MEDIUM",
+    "timeCreated": "2024-02-13T21:22:55.361377",
+    "timeUpdated": "2024-02-13T21:23:55.315742"
+  }
