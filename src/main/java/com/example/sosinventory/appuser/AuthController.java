@@ -46,7 +46,7 @@ public class AuthController {
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ApiFailedResponse> handleBadCredentialsException(BadCredentialsException e) {
         log.error("handleBadCredentialsException/ERROR: ", e);
-        return new ResponseEntity<>(new ApiFailedResponse("invalid user email or password"), HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(new ApiFailedResponse("invalid user username or password"), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(DisabledException.class)

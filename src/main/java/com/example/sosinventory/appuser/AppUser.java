@@ -62,7 +62,7 @@ public class AppUser implements UserDetails {
     private String profilePhotoUrl;
 
     private Boolean locked = false;
-    private Boolean enabled = false;
+    private Boolean enabled = true;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME, pattern = "yyyy-MM-dd h:m:s")
     private LocalDateTime lastLogin = LocalDateTime.now();
@@ -85,7 +85,8 @@ public class AppUser implements UserDetails {
 
     @Override
     public String getUsername() {
-        return email;
+        log.info("getUsername:{}", username);
+        return username;
     }
 
     @Override

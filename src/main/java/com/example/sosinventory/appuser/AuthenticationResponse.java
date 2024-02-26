@@ -15,6 +15,7 @@ public class AuthenticationResponse {
 
     private String role;
     private String userId;
+    private String username;
     private String firstName;
     private String lastName;
     private LocalDateTime lastLogin;

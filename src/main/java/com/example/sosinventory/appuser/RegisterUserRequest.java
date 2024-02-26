@@ -19,6 +19,9 @@ public class RegisterUserRequest {
 
     private String lastName;
 
+    @NotBlank(message = "username can not be blank")
+    private String username;
+
     @Email(message = "invalid email")
     private String email;
 

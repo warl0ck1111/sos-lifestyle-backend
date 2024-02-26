@@ -43,4 +43,6 @@ public interface AppUserRepository extends JpaRepository<AppUser, Long> {
 
     @Query("SELECT u FROM AppUser u WHERE LOWER(u.email) LIKE LOWER(CONCAT('%', ?1, '%'))")
     Page<AppUser> searchUsers(String keyword, PageRequest pageRequest);
+
+    Optional<AppUser> findByUsername(String username);
 }

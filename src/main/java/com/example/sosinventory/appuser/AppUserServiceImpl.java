@@ -63,10 +63,10 @@ public class AppUserServiceImpl implements AppUserService {
         try {
             if (userRequest != null) {
                 //check if user exists
-                Boolean userExists = appUserRepository.existsByEmail(userRequest.getEmail());
+                Boolean userExists = appUserRepository.existsByUsername(userRequest.getUsername());
                 if (userExists) {
-                    log.error("user with email {} already exists", userRequest.getEmail());
-                    throw new AppUserException(String.format("user with email: %s already exists", userRequest.getEmail()));
+                    log.error("user with username {} already exists", userRequest.getUsername());
+                    throw new AppUserException(String.format("user with username: %s already exists", userRequest.getUsername()));
                 }
                 else { // create new user
 
@@ -74,7 +74,7 @@ public class AppUserServiceImpl implements AppUserService {
                     AppUser user = computeAppUserData(userRequest, encodedPassword, Language.English);
 
                     AppUser registeredUser = appUserRepository.save(user);
-                    log.info("registerAppUser/ user {} created successfully", userRequest.getEmail());
+                    log.info("registerAppUser/ user {} created successfully", userRequest.getUsername());
 
                     //generate and save token to users email
                     final String token = tokenService.generateAndPersistUserToken(registeredUser.getEmail(), TokenType.NEW_ACCOUNT).getToken();
@@ -86,7 +86,7 @@ public class AppUserServiceImpl implements AppUserService {
 
                     String jwtToken = jwtService.generateToken(registeredUser);
                     String refreshToken = jwtService.generateRefreshToken(registeredUser);
-                    return AuthenticationResponse.builder().accessToken(jwtToken).refreshToken(refreshToken).userId(String.valueOf(registeredUser.getId())).role(registeredUser.getRole().name()).lastLogin(registeredUser.getLastLogin()).firstName(registeredUser.getFirstName()).lastName(registeredUser.getLastName()).emailAddress(registeredUser.getEmail()).build();
+                    return AuthenticationResponse.builder().accessToken(jwtToken).refreshToken(refreshToken).username(registeredUser.getUsername()).userId(String.valueOf(registeredUser.getId())).role(registeredUser.getRole().name()).lastLogin(registeredUser.getLastLogin()).firstName(registeredUser.getFirstName()).lastName(registeredUser.getLastName()).emailAddress(registeredUser.getEmail()).build();
                 }
             }
         } catch (Exception e) {
@@ -98,13 +98,13 @@ public class AppUserServiceImpl implements AppUserService {
 
 
     public AuthenticationResponse loginAppUser(@NotNull AuthenticationRequest request) {
-        final String email = request.getEmail().trim().toLowerCase();
-        log.info("loginAppUser/email:{}", email);
+        final String username = request.getUsername().trim().toLowerCase();
+        log.info("loginAppUser/username:{}", username);
 
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, request.getPassword()));
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, request.getPassword()));
 
 
-        final AppUser appUser = findAppUserByEmail(request.getEmail().toLowerCase());
+        final AppUser appUser = findAppUserByUsername(request.getUsername().toLowerCase());
         if (appUser != null) {
             LocalDateTime lastLogin = appUser.getLastLogin();
             appUser.setLastLogin(LocalDateTime.now());
@@ -117,7 +117,7 @@ public class AppUserServiceImpl implements AppUserService {
 //            tokenService.saveUserToken(appUser, jwtToken);
 
             return AuthenticationResponse.builder().accessToken(jwtToken).refreshToken(refreshToken).userId(String.valueOf(appUser.getId())).role(appUser.getRole().name()).lastLogin(appUser.getLastLogin()).firstName(appUser.getFirstName()).lastName(appUser.getLastName()).emailAddress(appUser.getEmail()).build();
-        } else log.info("loginUser/user:{} not found", email);
+        } else log.info("loginUser/user:{} not found", username);
         return null;
     }
 
@@ -165,11 +165,11 @@ public class AppUserServiceImpl implements AppUserService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String email) {
-        log.info("loadByUsername/email:{}", email);
-        return appUserRepository.findByEmail(email.toLowerCase().trim()).orElseThrow(() -> {
-            log.error(String.format("no user with email: %s found", email));
-            return new AppUserException(String.format("no user with email: %s found", email));
+    public UserDetails loadUserByUsername(String username) {
+        log.info("loadByUsername/username:{}", username);
+        return appUserRepository.findByUsername(username.toLowerCase().trim()).orElseThrow(() -> {
+            log.error(String.format("no user with username: %s found", username));
+            return new AppUserException(String.format("no user with username: %s found", username));
         });
     }
 
@@ -362,6 +362,11 @@ public class AppUserServiceImpl implements AppUserService {
         return appUserRepository.findByEmail(email.toLowerCase().trim()).orElseThrow(() -> new AppUserException(String.format("no user with email: %s found", email)));
     }
 
+ private AppUser findAppUserByUsername(String username) {
+        log.info("findAppUserByUsername/username:{}", username);
+        return appUserRepository.findByUsername(username.toLowerCase().trim()).orElseThrow(() -> new AppUserException(String.format("no user with username: %s found", username)));
+    }
+
     private AppUser findUserById(long userId) {
         log.info("findUserById/userId={}", userId);
         return appUserRepository.findById(userId).orElseThrow(() -> new AppUserException("user not found"));
@@ -378,6 +383,7 @@ public class AppUserServiceImpl implements AppUserService {
         return AppUser.builder()
                 .password(encodedPassword)
                 .lastLogin(LocalDateTime.now())
+                .username(userRequest.getUsername())
                 .email(userRequest.getEmail().toLowerCase().trim())
                 .role(Role.valueOf(StringUtils.deleteWhitespace(userRequest.getRole().toUpperCase())))
                 .locked(false).enabled(false)
