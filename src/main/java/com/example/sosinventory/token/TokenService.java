@@ -14,6 +14,7 @@ import java.util.Random;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class TokenService {
 
     private final TokenRepository tokenRepository;

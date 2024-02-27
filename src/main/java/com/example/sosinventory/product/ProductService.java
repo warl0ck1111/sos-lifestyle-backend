@@ -18,9 +18,11 @@ public interface ProductService {
 
     Product getProductByBarCode(String barCode);
 
-    Product updateBrand(long productId, long brandId);
+    Product updateBrand(long productId, String brand);
 
     Product updateCategory(long productId, long categoryId);
     Product updateColor(long productId, String color);
     Product updateSize(long productId, Size size);
+
+    Product getProductByName(String name);
 }

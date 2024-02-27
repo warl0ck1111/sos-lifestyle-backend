@@ -35,8 +35,8 @@ public class Product {
     @ManyToOne
     private Category category;
 
-    @ManyToOne
-    private Brand brand;
+    @Column
+    private String brand;
 
     private String color;
 

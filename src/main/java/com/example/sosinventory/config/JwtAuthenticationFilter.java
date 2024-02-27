@@ -16,6 +16,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -66,7 +67,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }catch (Exception e){
 
             log.error("doFilterInternal/ERROR:",e);
-            if (e instanceof ExpiredJwtException || e instanceof UserNotFoundException) {
+            if (e instanceof ExpiredJwtException || e instanceof UserNotFoundException || e instanceof UsernameNotFoundException) {
                 response.setStatus(HttpStatus.UNAUTHORIZED.value());
                 ApiErrorResponse errorResponse = new ApiErrorResponse(e.getMessage());
                 try {

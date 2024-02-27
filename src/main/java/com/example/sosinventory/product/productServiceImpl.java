@@ -1,12 +1,11 @@
 package com.example.sosinventory.product;
 
-import com.example.sosinventory.product.brand.Brand;
-import com.example.sosinventory.product.brand.BrandService;
 import com.example.sosinventory.product.category.Category;
 import com.example.sosinventory.product.category.CategoryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +19,6 @@ public class productServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
     private final CategoryService categoryService;
-    private final BrandService brandService;
 
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
     @Override
@@ -30,11 +28,11 @@ public class productServiceImpl implements ProductService {
             Product product = new Product();
             BeanUtils.copyProperties(productRequest, product);
             Category category = categoryService.getCategoryById(productRequest.getCategoryId());
-            Brand brand = brandService.getBrandById(productRequest.getBrandId());
-            product.setBrand(brand);
+//            Brand brand = brandService.getBrandById(productRequest.getBrandId());
+            product.setBrand(productRequest.getBrand());
             product.setCategory(category);
             return productRepository.save(product);
-        }else{
+        } else {
             return findProductByBarCode(productRequest.getBarCode());
         }
     }
@@ -61,8 +59,7 @@ public class productServiceImpl implements ProductService {
                     .orElseThrow(() -> new IllegalArgumentException("Product not found with id: " + id));
             BeanUtils.copyProperties(productRequest, productToUpdate);
             return productRepository.save(productToUpdate);
-        }
-        else{
+        } else {
             return findProductByBarCode(productRequest.getBarCode());
         }
     }
@@ -70,7 +67,7 @@ public class productServiceImpl implements ProductService {
     @Override
     public List<Product> viewAllProducts() {
         log.info("Viewing all products");
-        return productRepository.findAll();
+        return productRepository.findAll(Sort.by(Sort.Direction.DESC, "timeUpdated"));
     }
 
     @Override
@@ -102,11 +99,18 @@ public class productServiceImpl implements ProductService {
     }
 
     @Override
-    public Product updateBrand(long productId, long brandId) {
+    public Product getProductByName(String name) {
+        log.info("getProductByName/name:{}", name);
+        return findProductByName(name);
+    }
+
+
+    @Override
+    public Product updateBrand(long productId, String brand) {
         log.info("updateBrand/productId:{}", productId);
-        log.info("updateBrand/brandId:{}", brandId);
+        log.info("updateBrand/brand:{}", brand);
         Product product = findProductById(productId);
-        Brand brand = brandService.getBrandById(brandId);
+//        Brand brand = brandService.getBrandById(brand);
         product.setBrand(brand);
         return productRepository.save(product);
     }
@@ -148,5 +152,10 @@ public class productServiceImpl implements ProductService {
     private Product findProductByBarCode(String barCode) {
         log.info("findProductByBarCode/barCode:{}", barCode);
         return productRepository.findByBarCodeIgnoreCase(barCode).orElseThrow(() -> new ProductNotFoundException("product with barcode:" + barCode + " not found"));
+    }
+
+    private Product findProductByName(String name) {
+        log.info("findProductByName/name:{}", name);
+        return productRepository.findByNameIgnoreCase(name).orElseThrow(() -> new ProductNotFoundException("product with name:" + name + " not found"));
     }
 }

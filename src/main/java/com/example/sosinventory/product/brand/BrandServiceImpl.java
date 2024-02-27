@@ -50,7 +50,7 @@ public class BrandServiceImpl implements BrandService {
 
 
     private Brand findBrandById(long id){
-        return brandRepository.findById(id).orElseThrow(()-> new BrandException("band not found"));
+        return brandRepository.findById(id).orElseThrow(()-> new BrandException("brand not found"));
     }
 
 

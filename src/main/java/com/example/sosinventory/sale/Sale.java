@@ -30,6 +30,8 @@ public class Sale {
     @Column(nullable = false)
     private double totalPrice;
 
+    @CreationTimestamp
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME, pattern = "yyyy-MM-dd h:m:s")
     @Column(nullable = false)
     private LocalDateTime saleDate;
 

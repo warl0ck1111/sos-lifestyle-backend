@@ -53,7 +53,7 @@ public class CategoryServiceImpl implements CategoryService {
 
 
     private Category findCategoryById(long id){
-        return categoryRepository.findById(id).orElseThrow(()-> new CategoryException("band not found"));
+        return categoryRepository.findById(id).orElseThrow(()-> new CategoryException("category not found"));
     }
 
 

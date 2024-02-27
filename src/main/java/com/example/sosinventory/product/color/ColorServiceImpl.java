@@ -51,7 +51,7 @@ public class ColorServiceImpl implements ColorService {
 
 
     private Color findColorById(long id){
-        return colorRepository.findById(id).orElseThrow(()-> new ColorException("band not found"));
+        return colorRepository.findById(id).orElseThrow(()-> new ColorException("Color not found"));
     }
 
 

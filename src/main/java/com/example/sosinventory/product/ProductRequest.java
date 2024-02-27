@@ -27,8 +27,7 @@ public class ProductRequest {
     @Min(value = 1, message = "invalid product categoryId")
     private long categoryId;
 
-    @Min(value = 1, message = "invalid product brandId")
-    private long brandId;
+    private String brand;
 
     private String color;
 

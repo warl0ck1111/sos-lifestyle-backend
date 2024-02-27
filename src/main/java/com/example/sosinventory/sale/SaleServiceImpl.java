@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +26,7 @@ public class SaleServiceImpl implements SaleService {
         for (Item item : saleRequest.getItems()) {
             Product product = productService.getProductById(item.getProductId());
             Sale newSale = new Sale();
-            newSale.setSaleDate(item.getSaleDate());
+            newSale.setSaleDate(LocalDateTime.now());
             newSale.setProduct(product);
             newSale.setQuantity(item.getQuantity());
             newSale.setTotalPrice(product.getPrice() * item.getQuantity());

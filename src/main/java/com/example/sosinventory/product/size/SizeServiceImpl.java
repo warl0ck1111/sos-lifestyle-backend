@@ -51,7 +51,7 @@ public class SizeServiceImpl implements SizeService {
 
 
     private Size findSizeById(long id){
-        return sizeRepository.findById(id).orElseThrow(()-> new SizeException("band not found"));
+        return sizeRepository.findById(id).orElseThrow(()-> new SizeException("Size not found"));
     }
 
 

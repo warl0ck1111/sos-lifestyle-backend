@@ -36,11 +36,11 @@ public class ProductController {
         return ResponseEntity.ok(products);
     }
 
-//    @GetMapping("/{id}")
-//    public ResponseEntity<Product> getProduct(@PathVariable long id) {
-//        Product product = productService.getProductById(id);
-//        return ResponseEntity.ok(product);
-//    }
+    @GetMapping("/{id}")
+    public ResponseEntity<Product> getProductById(@PathVariable long id) {
+        Product product = productService.getProductById(id);
+        return ResponseEntity.ok(product);
+    }
 
     @GetMapping("/barcode/{barcode}")
     public ResponseEntity<Product> getProductByBarCode(@PathVariable String barcode) {
@@ -49,8 +49,15 @@ public class ProductController {
         return ResponseEntity.ok(product);
     }
 
+    @GetMapping("/name/{name}")
+    public ResponseEntity<Product> getProductByName(@PathVariable String name) {
+        Product product = productService.getProductByName(name);
+        //todo if product quantity is 0 h
+        return ResponseEntity.ok(product);
+    }
+
     @PutMapping("/{productId}/brand/{brandId}")
-    public ResponseEntity<Product> updateBrand(@PathVariable long productId, @PathVariable long brandId) {
+    public ResponseEntity<Product> updateBrand(@PathVariable long productId, @PathVariable String brandId) {
         Product product = productService.updateBrand(productId, brandId);
         return ResponseEntity.ok(product);
     }
