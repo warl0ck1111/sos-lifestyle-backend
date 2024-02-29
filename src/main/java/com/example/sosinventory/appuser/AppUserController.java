@@ -74,8 +74,8 @@ public class AppUserController {
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/users")
     public ResponseEntity<Page<AppUser>> getAllUsers(@RequestParam(name = "page", defaultValue = "0") int page,
-                                                          @RequestParam(name = "pageSize", defaultValue = "10") int pageSize,
-                                                          @RequestParam(name = "sortField", defaultValue = "creationDate") String sortField,
+                                                          @RequestParam(name = "pageSize", defaultValue = "1000") int pageSize,
+                                                          @RequestParam(name = "sortField", defaultValue = "timeUpdated") String sortField,
                                                           @RequestParam(name = "sortDirection", defaultValue = "DESC") Sort.Direction sortDirection) {
         Page<AppUser> allUsers = appUserService.findAllUsers(page, pageSize, sortField, sortDirection);
         return new ResponseEntity<>(allUsers, HttpStatus.OK);

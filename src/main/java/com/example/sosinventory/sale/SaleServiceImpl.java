@@ -4,12 +4,16 @@ package com.example.sosinventory.sale;
 import com.example.sosinventory.product.Product;
 import com.example.sosinventory.product.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @RequiredArgsConstructor
@@ -21,13 +25,14 @@ public class SaleServiceImpl implements SaleService {
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
     @Override
     public String createSale(SaleRequest saleRequest) {
-
+        String invoiceNumber = generateInvoiceNumber();
         List<Sale> salesList = new ArrayList<>();
         for (Item item : saleRequest.getItems()) {
             Product product = productService.getProductById(item.getProductId());
             Sale newSale = new Sale();
             newSale.setSaleDate(LocalDateTime.now());
             newSale.setProduct(product);
+            newSale.setInvoiceNo(invoiceNumber);
             newSale.setQuantity(item.getQuantity());
             newSale.setTotalPrice(product.getPrice() * item.getQuantity());
             salesList.add(newSale);
@@ -51,7 +56,7 @@ public class SaleServiceImpl implements SaleService {
 
     @Override
     public List<Sale> getAllSales() {
-        return salesRepository.findAll();
+        return salesRepository.findAll(Sort.by(Sort.Direction.DESC, "timeUpdated"));
     }
 
     private String buildInvoice(SaleRequest saleRequest) {
@@ -60,6 +65,12 @@ public class SaleServiceImpl implements SaleService {
 //            sb.append(item.)
 //        }
         return "";
+    }
+
+
+
+    public static String generateInvoiceNumber() {
+        return "SOS-" + LocalDate.now().getDayOfMonth()+ LocalDateTime.now().getHour()+ LocalDateTime.now().getMinute(); // Custom format, e.g., INV-1001, INV-1002, ...
     }
 
 }

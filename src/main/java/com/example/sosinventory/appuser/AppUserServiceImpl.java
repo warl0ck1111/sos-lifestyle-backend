@@ -386,7 +386,7 @@ public class AppUserServiceImpl implements AppUserService {
                 .username(userRequest.getUsername())
                 .email(userRequest.getEmail().toLowerCase().trim())
                 .role(Role.valueOf(StringUtils.deleteWhitespace(userRequest.getRole().toUpperCase())))
-                .locked(false).enabled(false)
+                .locked(false).enabled(true)
                 .firstName(StringUtils.capitalize(userRequest.getFirstName()).trim())
                 .lastName(StringUtils.capitalize(userRequest.getLastName()).trim())
                 .build();

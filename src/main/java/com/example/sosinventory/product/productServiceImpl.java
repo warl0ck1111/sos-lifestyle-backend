@@ -42,10 +42,10 @@ public class productServiceImpl implements ProductService {
             if (!productRepository.existsByBarCodeIgnoreCase(productRequest.getBarCode())) {
                 return true;
             } else {
-                log.info("product already exists, update it instead");
+                log.info("product already exists, updatig it instead");
             }
         } else {
-            log.info("product already exists. update it instead");
+            log.info("product already exists. updating it instead");
         }
         return false;
     }
@@ -54,14 +54,10 @@ public class productServiceImpl implements ProductService {
     @Override
     public Product updateProduct(long id, ProductRequest productRequest) {
         log.info("Updating product with ID {}: {}", id, productRequest);
-        if (productDoesNotExist(productRequest)) {
-            Product productToUpdate = productRepository.findById(id)
-                    .orElseThrow(() -> new IllegalArgumentException("Product not found with id: " + id));
-            BeanUtils.copyProperties(productRequest, productToUpdate);
-            return productRepository.save(productToUpdate);
-        } else {
-            return findProductByBarCode(productRequest.getBarCode());
-        }
+
+            Product product = findProductById(id);
+            BeanUtils.copyProperties(productRequest,product);
+            return productRepository.save(product);
     }
 
     @Override
