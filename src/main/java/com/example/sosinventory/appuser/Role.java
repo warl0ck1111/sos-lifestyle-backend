@@ -15,6 +15,7 @@ import static com.example.sosinventory.appuser.Permission.*;
 @RequiredArgsConstructor
 public enum Role {
 
+    STAFF(Collections.emptySet()),
     EMPLOYEE(Collections.emptySet()),
     ADMIN(
             Set.of(

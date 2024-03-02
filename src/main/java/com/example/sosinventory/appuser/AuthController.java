@@ -72,6 +72,6 @@ public class AuthController {
         log.error("handleMethodArgumentNotValidException/e :", e);
         List<String> errorList = new ArrayList<>();
         e.getAllErrors().forEach(objectError -> errorList.add(objectError.getDefaultMessage()));
-        return new ResponseEntity<>(new ApiFailedResponse(errorList), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ApiFailedResponse(errorList.get(0)), HttpStatus.BAD_REQUEST);
     }
 }

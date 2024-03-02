@@ -35,6 +35,8 @@ public class Sale {
     @Column(nullable = false)
     private int quantity;
 
+    private String cashier;
+
     @Column(nullable = false)
     private double totalPrice;
 

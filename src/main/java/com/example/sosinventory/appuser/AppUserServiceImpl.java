@@ -63,12 +63,16 @@ public class AppUserServiceImpl implements AppUserService {
         try {
             if (userRequest != null) {
                 //check if user exists
-                Boolean userExists = appUserRepository.existsByUsername(userRequest.getUsername());
-                if (userExists) {
+                boolean userExistsByUsername = appUserRepository.existsByUsernameIgnoreCase(userRequest.getUsername());
+                boolean userExistsByEmail = appUserRepository.existsByEmailIgnoreCase(userRequest.getEmail());
+                if (userExistsByUsername) {
                     log.error("user with username {} already exists", userRequest.getUsername());
                     throw new AppUserException(String.format("user with username: %s already exists", userRequest.getUsername()));
-                }
-                else { // create new user
+                } else if (userExistsByEmail) {
+                    log.error("user with email {} already exists", userRequest.getEmail());
+                    throw new AppUserException(String.format("user with email: %s already exists", userRequest.getEmail()));
+
+                } else { // create new user
 
                     String encodedPassword = passwordEncoder.encode((userRequest.getPassword()));
                     AppUser user = computeAppUserData(userRequest, encodedPassword, Language.English);
@@ -86,7 +90,7 @@ public class AppUserServiceImpl implements AppUserService {
 
                     String jwtToken = jwtService.generateToken(registeredUser);
                     String refreshToken = jwtService.generateRefreshToken(registeredUser);
-                    return AuthenticationResponse.builder().accessToken(jwtToken).refreshToken(refreshToken).username(registeredUser.getUsername()).userId(String.valueOf(registeredUser.getId())).role(registeredUser.getRole().name()).lastLogin(registeredUser.getLastLogin()).firstName(registeredUser.getFirstName()).lastName(registeredUser.getLastName()).emailAddress(registeredUser.getEmail()).build();
+                    return AuthenticationResponse.builder().accessToken(jwtToken).gender(registeredUser.getGender()).refreshToken(refreshToken).username(registeredUser.getUsername()).userId(String.valueOf(registeredUser.getId())).role(registeredUser.getRole().name()).lastLogin(registeredUser.getLastLogin()).firstName(registeredUser.getFirstName()).lastName(registeredUser.getLastName()).emailAddress(registeredUser.getEmail()).build();
                 }
             }
         } catch (Exception e) {
@@ -167,7 +171,7 @@ public class AppUserServiceImpl implements AppUserService {
     @Override
     public UserDetails loadUserByUsername(String username) {
         log.info("loadByUsername/username:{}", username);
-        return appUserRepository.findByUsername(username.toLowerCase().trim()).orElseThrow(() -> {
+        return appUserRepository.findByUsernameIgnoreCase(username.toLowerCase().trim()).orElseThrow(() -> {
             log.error(String.format("no user with username: %s found", username));
             return new AppUserException(String.format("no user with username: %s found", username));
         });
@@ -255,7 +259,7 @@ public class AppUserServiceImpl implements AppUserService {
     @Transactional
     public void forgotPassword(String email) {
         log.info("forgotPassword/email: {}", email);
-        AppUser appUser = appUserRepository.findByEmail(email).orElseThrow(() -> new AppUserException(String.format("email:%s does not exist", email)));
+        AppUser appUser = appUserRepository.findByEmailIgnoreCase(email).orElseThrow(() -> new AppUserException(String.format("email:%s does not exist", email)));
         String token = tokenService.generateAndPersistUserToken(email, TokenType.FORGOT_PASSWORD).getToken();
 //        todo:
 //        userEmailService.constructAndSendResetPasswordEmailMessage(appUser.getEmail(), token, Language.English);
@@ -266,19 +270,18 @@ public class AppUserServiceImpl implements AppUserService {
     @Transactional
     public void resetAppUserPassword(@NotNull ResetPasswordRequest request) {
         log.info("resetAppUserPassword/email:{}", request.getEmail());
-        log.info("resetAppUserPassword/token:{}", request.getToken());
 
 
         //get token for email and token and tokenType
-        boolean tokenExistForEmail = tokenService.existsByEmailAddressAndTokenAndTokenType(request.getEmail(), request.getToken(), TokenType.FORGOT_PASSWORD);
-        if (tokenExistForEmail) {
+//        boolean tokenExistForEmail = tokenService.existsByEmailAddressAndTokenAndTokenType(request.getEmail(), request.getToken(), TokenType.FORGOT_PASSWORD);
+//        if (tokenExistForEmail) {
             AppUser appUser = findAppUserByEmail(request.getEmail());
             String encodedPassword = passwordEncoder.encode((request.getPassword()));
             appUser.setPassword(encodedPassword);
             appUserRepository.save(appUser);
             log.info("resetAppUserPassword/ user password reset successfully");
 
-        } else log.info("user password was not reset successfully");
+//        } else log.info("user password was not reset successfully");
     }
 
     @Override
@@ -331,7 +334,7 @@ public class AppUserServiceImpl implements AppUserService {
     @Transactional
     public void deleteUserByEmail(String email) {
         log.info("deleteUserByEmail/email: {}", email);
-        appUserRepository.deleteByEmail(email);
+        appUserRepository.deleteByEmailIgnoreCase(email);
     }
 
     @Override
@@ -359,12 +362,12 @@ public class AppUserServiceImpl implements AppUserService {
 
     private AppUser findAppUserByEmail(String email) {
         log.info("findAppUserByEmail/email:{}", email);
-        return appUserRepository.findByEmail(email.toLowerCase().trim()).orElseThrow(() -> new AppUserException(String.format("no user with email: %s found", email)));
+        return appUserRepository.findByEmailIgnoreCase(email.toLowerCase().trim()).orElseThrow(() -> new AppUserException(String.format("no user with email: %s found", email)));
     }
 
  private AppUser findAppUserByUsername(String username) {
         log.info("findAppUserByUsername/username:{}", username);
-        return appUserRepository.findByUsername(username.toLowerCase().trim()).orElseThrow(() -> new AppUserException(String.format("no user with username: %s found", username)));
+        return appUserRepository.findByUsernameIgnoreCase(username.toLowerCase().trim()).orElseThrow(() -> new AppUserException(String.format("no user with username: %s found", username)));
     }
 
     private AppUser findUserById(long userId) {
@@ -384,6 +387,8 @@ public class AppUserServiceImpl implements AppUserService {
                 .password(encodedPassword)
                 .lastLogin(LocalDateTime.now())
                 .username(userRequest.getUsername())
+                .dateOfBirth(userRequest.getDateOfBirth())
+                .gender(Gender.valueOf(userRequest.getGender().toUpperCase().trim()))
                 .email(userRequest.getEmail().toLowerCase().trim())
                 .role(Role.valueOf(StringUtils.deleteWhitespace(userRequest.getRole().toUpperCase())))
                 .locked(false).enabled(true)

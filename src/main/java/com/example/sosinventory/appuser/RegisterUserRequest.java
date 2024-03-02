@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 /**
  * @author Okala Bashir .O.
  */
@@ -21,6 +23,8 @@ public class RegisterUserRequest {
 
     @NotBlank(message = "username can not be blank")
     private String username;
+    private String gender;
+    private LocalDateTime dateOfBirth;
 
     @Email(message = "invalid email")
     private String email;

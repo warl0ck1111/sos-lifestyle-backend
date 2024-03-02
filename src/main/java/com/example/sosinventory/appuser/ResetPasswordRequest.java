@@ -13,7 +13,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ResetPasswordRequest {
     private String email;
-    private String token;
     private String password;
-    private String confirmPassword;
 }

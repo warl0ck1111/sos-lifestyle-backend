@@ -1,8 +1,11 @@
 package com.example.sosinventory.sale;
 
 
+import com.example.sosinventory.appuser.AppUser;
 import com.example.sosinventory.product.Product;
 import com.example.sosinventory.product.ProductService;
+import com.example.sosinventory.utils.AppUserUtils;
+import com.example.sosinventory.utils.IAuthenticationFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,11 +23,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class SaleServiceImpl implements SaleService {
     private final SaleRepository salesRepository;
     private final ProductService productService;
+    private final IAuthenticationFacade authenticationFacade;
 
 
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
     @Override
     public String createSale(SaleRequest saleRequest) {
+        AppUser cashier = authenticationFacade.getCurrentUser();
+        String userFullName = AppUserUtils.getAppUserFullName(cashier);
         String invoiceNumber = generateInvoiceNumber();
         List<Sale> salesList = new ArrayList<>();
         for (Item item : saleRequest.getItems()) {
@@ -32,6 +38,7 @@ public class SaleServiceImpl implements SaleService {
             Sale newSale = new Sale();
             newSale.setSaleDate(LocalDateTime.now());
             newSale.setProduct(product);
+            newSale.setCashier(userFullName);
             newSale.setInvoiceNo(invoiceNumber);
             newSale.setQuantity(item.getQuantity());
             newSale.setTotalPrice(product.getPrice() * item.getQuantity());

@@ -2,6 +2,7 @@ package com.example.sosinventory.appuser;
 
 import com.example.sosinventory.response.ApiErrorResponse;
 import com.example.sosinventory.response.ApiFailedResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -65,7 +66,7 @@ public class AppUserController {
     }
 
     @PutMapping("/users/{userId}/update_profile")
-    public ResponseEntity<Void> updateProfile(@PathVariable String userId, @RequestBody UpdateAppUserProfileRequest request) {
+    public ResponseEntity<Void> updateProfile(@PathVariable String userId,@Valid @RequestBody UpdateAppUserProfileRequest request) {
         appUserService.updateAppUserProfile(userId, request);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
@@ -158,17 +159,6 @@ public class AppUserController {
         log.info("handleAccessDeniedException/");
         log.error("handleAccessDeniedException/e=" + e);
         return new ResponseEntity<>(new ApiFailedResponse(e.getMessage()), HttpStatus.FORBIDDEN);
-    }
-
-
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<ApiFailedResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-
-        log.error("handleMethodArgumentNotValidException/e :", e);
-        List<String> errorList = new ArrayList<>();
-        e.getAllErrors().forEach(objectError -> errorList.add(objectError.getDefaultMessage()));
-        return new ResponseEntity<>(new ApiFailedResponse(errorList), HttpStatus.BAD_REQUEST);
     }
 
 
